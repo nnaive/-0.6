@@ -1,0 +1,424 @@
+#include <stdio.h>
+#include <windows.h>
+#include <time.h>
+int coordinate[12][22];
+int z;
+int s=0;
+int b=0;
+int bb;
+int score=0;
+int count=0;
+int directing;
+void initialization ()
+{
+	int i,j;
+	for(j=0;j<=21;j++)
+	{
+		for(i=0;i<=11;i++)
+		{if(i==0||i==11||j==0||j==21)
+		coordinate[i][j]=0;
+		else coordinate[i][j]=1;
+		}
+	}
+}
+void launch (int l)
+{
+	int x,y;
+	for(y=0;y<=21;y++)
+	{
+		for(x=0;x<=11;x++)
+		{
+			if(x==0||x==11||y==0||y==21)
+			{coordinate[x][y]=0;
+			printf("▓");}
+		else if(coordinate[x][y]==1) printf("□");
+		else printf("■");
+		if(y==3&&x==11) printf(" ————总得分：%d",10*score+2*count);
+		if(y==5&&x==11) printf(" ———消除得分：%d",10*score);
+		if(y==7&&x==11) printf(" ———方块总数：%d",count);
+		if(y==9&&x==11) printf(" ———每消除一行得10分");
+		if(y==11&&x==11) printf(" ———每出现方块得2分");
+		if(y==13&&x==11) printf(" ———presented by：GH");
+		if(y==15&&x==11) printf(" —————2017/9/21");
+		}
+		printf("\n");
+	}
+}
+void shape_0 (int a,int m)
+{
+	int x,y;
+	for(y=1+a;y<=2+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if(x==5+m||x==6+m)
+		coordinate[x][y]=2-s;
+		}
+	}
+}
+void shape_1 (int a,int m)
+{
+	int x,y;
+	if(directing==0||directing==-1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if(x==5+m||(x==6+m&&y!=(1+a)&&y!=(2+a)))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else if(directing==1)
+	{
+		for(y=2+a;y<=3+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==5+m||((x==6+m||x==7+m)&&y==2+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+	else if(directing==2)
+	{
+		for(y=2+a;y<=4+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==6+m||((x==5+m)&&y==2+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+	else if(directing==3)
+	{
+		for(y=2+a;y<=3+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==6+m||((x==4+m||x==5+m)&&y==3+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+}
+void shape_2 (int a,int m)
+{
+	int x,y;
+	if(directing%2==0||directing==-1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==5+m&&y!=3+a)||(x==6+m&&y!=1+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else
+	for(y=2+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==5+m&&y==3+a)||(x==6+m)||(x==7+m&&y==2+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+}
+void shape_3 (int a,int m)
+{
+	int x,y;
+	if(directing==0||directing==-1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x>=5+m&&y==1+a&&x<=7+m)||(x==6+m&&y==2+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else if(directing==1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==5+m&&y==2+a)||(x==6+m))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else if(directing==2)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x>=5+m&&y==2+a&&x<=7+m)||(x==6+m&&y==1+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else if(directing==3)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==6+m&&y==2+a)||(x==5+m))
+		coordinate[x][y]=2-s;
+		}
+	}
+}
+void shape_4 (int a,int m)
+{
+	int x,y;
+	if(directing%2==0||directing==-1)
+	for(y=1+a;y<=4+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if(x==5+m)
+		coordinate[x][y]=2-s;
+		}
+	}
+	else
+	for(y=1+a;y<=4+a;y++)
+	{
+		for(x=4+m;x<=7+m;x++)
+		{if(y==2+a)
+		coordinate[x][y]=2-s;
+		}
+	}
+}
+void shape_5 (int a,int m)
+{
+	int x,y;
+	if(directing%2==0||directing==-1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==6+m&&y!=3+a)||(x==5+m&&y!=1+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else
+	for(y=2+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if((x==6+m&&y==3+a)||(x==5+m)||(x==4+m&&y==2+a))
+		coordinate[x][y]=2-s;
+		}
+	}
+}
+void shape_6 (int a,int m)
+{
+	int x,y;
+	if(directing==0||directing==-1)
+	for(y=1+a;y<=3+a;y++)
+	{
+		for(x=0;x<=11;x++)
+		{if(x==6+m||(x==5+m&&y==(3+a)))
+		coordinate[x][y]=2-s;
+		}
+	}
+	else if(directing==3)
+	{
+		for(y=2+a;y<=3+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==6+m||((x==5+m||x==4+m)&&y==2+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+	else if(directing==2)
+	{
+		for(y=2+a;y<=4+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==5+m||((x==6+m)&&y==2+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+	else if(directing==1)
+	{
+		for(y=2+a;y<=3+a;y++)
+		{
+			for(x=0;x<=11;x++)
+			{
+				if(x==5+m||((x==7+m||x==6+m)&&y==3+a))
+					coordinate[x][y]=2-s;
+			}
+		}
+	}
+}
+void random_z ()
+{
+	srand(time(0));
+	z=rand()%7;
+}
+
+void random_shape (int a,int m)
+{
+	switch (z)
+	{case 0: shape_0 (a,m); break;
+	case 1: shape_1 (a,m); break;
+	case 2: shape_2 (a,m); break;
+	case 3: shape_3 (a,m); break;
+	case 4: shape_4 (a,m); break;
+	case 5: shape_5 (a,m); break;
+	case 6: shape_6 (a,m); break;
+	}
+}
+int height (int i)
+{
+	switch (z)
+	{case 0:;
+	case 3:;return 2;
+	case 1:;
+	case 2:;
+	case 5:;
+	case 6:;return 3;
+	case 4:;return 4;
+	}
+}
+void remove_trace (int a)
+{s=1; random_shape(a-1,bb);s=0;}
+void load_trace (int a)
+{s=-1;random_shape(a,bb);s=0;}
+void remove_trace_1 (int a)
+{
+	s=1;
+	if(directing==0) directing=3;
+	else directing--;
+	random_shape(a-1,bb);
+	s=0;
+	if(directing==3) directing=0;
+	else directing++;
+}
+int hit_judge ()
+{
+	int i,j;
+	for(j=1;j<=20;j++)
+	{
+		for(i=1;i<=10;i++)
+		{if(coordinate[i][j]==2&&(coordinate[i][j+1]==3||coordinate[i][j+1]==0))
+		return 1;
+		}
+	}
+	return 0;
+}
+int death_judge ()
+{
+	int i;
+	for(i=1;i<=10;i++)
+	{if(coordinate[i][1]==3) return 1;
+	}
+	return 0;
+}
+void key_control()
+{
+	int direction;
+	char key;
+	{
+	getch();
+	key=getch();
+	bb=b;
+	 direction=key;
+	switch(direction)
+	{
+	case 72:if(directing==-1) directing+=2; else if(directing<3) directing++; else  directing=0;break;
+	case 80:;break;
+	case 75:if(edge_judge(1)==1) b--;break;
+	case 77:if(edge_judge(3)==1) b++;break;
+	}
+	}
+}
+int score_judge()
+{
+	int g=0;
+	int i,j;
+	for(j=20;j>=1;j--)
+	{
+		for(i=1;i<=10;i++)
+		{
+		g+=coordinate[i][j];
+		};
+		if(g==30) {score++;return j;}
+	else g=0;
+	}
+	return 0;
+
+}
+void removeline_judge()
+{
+	int i,j;
+	int line=score_judge();
+	if (line!=0)
+	{for(i=1;i<=10;i++)
+	{coordinate[i][line]=1;}
+	};
+	for(j=line-1;j>=1;j--)
+	{
+		for(i=1;i<=10;i++)
+		{coordinate[i][j+1]=coordinate[i][j];}	
+	}
+}
+int edge_judge(int m)
+{
+	int i,j;
+	printf("ej0");
+	if(m==1)
+	{
+	for(j=1;j<=20;j++)
+	{
+		for(i=1;i<=10;i++)
+		{
+			if((coordinate[i-1][j+1]==0||coordinate[i-1][j+1]==3)&&coordinate[i][j]==2)
+			{
+			return 0;}
+		}
+	}
+	return 1;
+	}
+	else if(m==3)
+	{
+		for(j=1;j<=20;j++)
+		{
+			for(i=1;i<=10;i++)
+			{
+				if(coordinate[i][j]==2&&(coordinate[i+1][j+1]==0||coordinate[i+1][j+1]==3)) return 0;
+			}
+		}
+		return 1;
+	}
+}
+int game_body()
+{
+	int x,y,a,h,f;
+	random_z ();
+	h=height (z);
+	printf("%d",h);
+	Sleep(100);
+	if(death_judge()==1) {system("CLS");printf ("\n\n\n\n        游戏结束！\n\n\n\n");Sleep(1000);return 1;}
+	count++;
+	for(a=0;a<=20;a++)
+	{ system("CLS");
+	f=a;
+	if(a>0) remove_trace (f);
+	if(directing!=-1) remove_trace_1(f);
+	random_shape (f,b);
+	launch(0);
+	key_control();
+	if(hit_judge ()==1){ break;}
+	}
+	load_trace(f);
+	removeline_judge();
+	a=0;
+	b=0;
+	directing=-1;
+	return 0;
+}
+
+main()
+{
+	int x,y,a,h,f;
+	initialization ();	launch(0);
+	Sleep(100);
+	for(;;)
+	{
+		Sleep(100);
+		if (game_body()==1) break;
+	}
+	system("pause");
+		return 0;
+}
